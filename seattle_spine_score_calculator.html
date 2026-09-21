@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seattle Spine Score (S3) Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        input[type="range"] {
+            accent-color: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-4xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+            <div class="flex items-center space-x-3 mb-2">
+                <div class="bg-blue-100 text-blue-600 p-2.5 rounded-xl">
+                    <i class="fa-solid font-bold fa-stethoscope text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Seattle Spine Score (S3) Calculator</h1>
+                    <p class="text-slate-500 text-sm sm:text-base mt-0.5">30-day post-operative complication risk assessment for complex spine surgery</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Form Section -->
+            <section class="lg:col-span-7 bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-blue-600"></i> Patient Parameters
+                    </h2>
+                    <button id="reset-btn" type="button" class="text-xs font-medium text-slate-500 hover:text-blue-600 flex items-center gap-1 transition-colors px-2 py-1 rounded-md hover:bg-slate-100">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Defaults
+                    </button>
+                </div>
+
+                <form id="s3-form" class="space-y-5" onsubmit="event.preventDefault();">
+                    <!-- Age Input -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="age-number" class="text-sm font-medium text-slate-700">Age (years)</label>
+                            <input type="number" id="age-number" min="18" max="100" value="60" class="w-20 px-2.5 py-1 text-right text-sm font-semibold text-blue-700 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                        </div>
+                        <input type="range" id="age-range" min="18" max="100" value="60" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <!-- BMI Input -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="bmi-number" class="text-sm font-medium text-slate-700">BMI (kg/m²)</label>
+                            <input type="number" id="bmi-number" min="10" max="60" step="0.1" value="26.0" class="w-20 px-2.5 py-1 text-right text-sm font-semibold text-blue-700 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                        </div>
+                        <input type="range" id="bmi-range" min="10" max="60" step="0.1" value="26.0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <!-- Gender Selection -->
+                    <div>
+                        <span class="block text-sm font-medium text-slate-700 mb-2">Gender</span>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center justify-center p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50/50 [&:has(input:checked)]:text-blue-700">
+                                <input type="radio" name="gender" value="Male" checked class="sr-only">
+                                <span class="text-sm font-medium">Male</span>
+                            </label>
+                            <label class="flex items-center justify-center p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50/50 [&:has(input:checked)]:text-blue-700">
+                                <input type="radio" name="gender" value="Female" class="sr-only">
+                                <span class="text-sm font-medium">Female</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Clinical Factors Toggles -->
+                    <div class="space-y-3 pt-2 border-t border-slate-100">
+                        <span class="block text-sm font-medium text-slate-700">Clinical Risk Factors</span>
+                        
+                        <!-- History of Smoking -->
+                        <div class="flex items-center justify-between p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">History of Smoking</span>
+                            <div class="flex gap-2">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="smoking" value="No" checked class="peer sr-only">
+                                    <span class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 peer-checked:bg-slate-800 peer-checked:text-white peer-checked:border-slate-800 transition-all">No</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="smoking" value="Yes" class="peer sr-only">
+                                    <span class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition-all">Yes</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Hypertension -->
+                        <div class="flex items-center justify-between p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">Hypertension</span>
+                            <div class="flex gap-2">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="hypertension" value="No" checked class="peer sr-only">
+                                    <span class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 peer-checked:bg-slate-800 peer-checked:text-white peer-checked:border-slate-800 transition-all">No</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="hypertension" value="Yes" class="peer sr-only">
+                                    <span class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition-all">Yes</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Anemia -->
+                        <div class="flex items-center justify-between p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">Anemia</span>
+                            <div class="flex gap-2">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="anemia" value="No" checked class="peer sr-only">
+                                    <span class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 peer-checked:bg-slate-800 peer-checked:text-white peer-checked:border-slate-800 transition-all">No</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="anemia" value="Yes" class="peer sr-only">
+                                    <span class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition-all">Yes</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Diabetes -->
+                        <div class="flex items-center justify-between p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                            <span class="text-sm font-medium text-slate-700">Diabetes</span>
+                            <div class="flex gap-2">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="diabetes" value="No" checked class="peer sr-only">
+                                    <span class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 peer-checked:bg-slate-800 peer-checked:text-white peer-checked:border-slate-800 transition-all">No</span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="diabetes" value="Yes" class="peer sr-only">
+                                    <span class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition-all">Yes</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Results Section -->
+            <section class="lg:col-span-5 flex flex-col gap-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                            <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-blue-600"></i> Complication Risk
+                            </h2>
+                            <span id="risk-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                Low Risk
+                            </span>
+                        </div>
+
+                        <!-- Big Result Display -->
+                        <div class="text-center py-4">
+                            <div class="text-slate-500 text-xs uppercase font-semibold tracking-wider mb-1">Estimated 30-Day Complication Probability</div>
+                            <div class="text-5xl font-black text-slate-900 tracking-tight" id="probability-text">
+                                0.0%
+                            </div>
+                        </div>
+
+                        <!-- Progress / Gauge Bar -->
+                        <div class="mt-6 mb-8">
+                            <div class="flex justify-between text-xs font-medium text-slate-500 mb-1.5">
+                                <span>0%</span>
+                                <span>15%</span>
+                                <span>30%</span>
+                                <span>100%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-3.5 p-0.5 border border-slate-200 overflow-hidden relative">
+                                <div id="progress-bar" class="h-full rounded-full transition-all duration-300 bg-emerald-500" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                                <span class="text-emerald-600 font-semibold">Low</span>
+                                <span class="text-amber-600 font-semibold">Moderate</span>
+                                <span class="text-red-600 font-semibold">High Risk</span>
+                            </div>
+                        </div>
+
+                        <!-- Logit details -->
+                        <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 flex justify-between items-center text-xs">
+                            <span class="text-slate-600 font-medium">Calculated Logit Value:</span>
+                            <span id="logit-text" class="font-mono font-semibold text-slate-800">-3.156</span>
+                        </div>
+                    </div>
+
+                    <!-- Information & Disclaimer -->
+                    <div class="mt-6 pt-6 border-t border-slate-100 text-xs text-slate-500 space-y-2.5">
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-blue-600 mt-0.5 shrink-0"></i>
+                            <p><strong class="text-slate-700">Validated Accuracy:</strong> Algorithm accuracy validated at <span class="font-semibold text-slate-800">81.6%</span>.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-layer-group text-blue-600 mt-0.5 shrink-0"></i>
+                            <p><strong class="text-slate-700">Complex Spine Surgery:</strong> Defined as spinal fusion surgery involving <span class="font-semibold text-slate-800">6 or more vertebral levels</span>.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 shrink-0"></i>
+                            <p class="italic">This model should never be used as a substitute for professional clinical judgment.</p>
+                        </div>
+                        <div class="pt-2 text-right">
+                            <a href="https://www.ncbi.nlm.nih.gov/pubmed/28676311" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium hover:underline">
+                                Reference Study (PubMed) <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const ageNumber = document.getElementById('age-number');
+        const ageRange = document.getElementById('age-range');
+        const bmiNumber = document.getElementById('bmi-number');
+        const bmiRange = document.getElementById('bmi-range');
+        const form = document.getElementById('s3-form');
+        const resetBtn = document.getElementById('reset-btn');
+
+        const probabilityText = document.getElementById('probability-text');
+        const logitText = document.getElementById('logit-text');
+        const progressBar = document.getElementById('progress-bar');
+        const riskBadge = document.getElementById('risk-badge');
+
+        // Synchronize numeric inputs with range sliders
+        function bindPair(numberInput, rangeInput) {
+            numberInput.addEventListener('input', () => {
+                let val = parseFloat(numberInput.value);
+                if (!isNaN(val)) {
+                    rangeInput.value = val;
+                    calculateScore();
+                }
+            });
+
+            rangeInput.addEventListener('input', () => {
+                numberInput.value = rangeInput.value;
+                calculateScore();
+            });
+        }
+
+        bindPair(ageNumber, ageRange);
+        bindPair(bmiNumber, bmiRange);
+
+        // Calculate Seattle Spine Score
+        function calculateScore() {
+            const age = parseFloat(ageNumber.value) || 0;
+            const bmi = parseFloat(bmiNumber.value) || 0;
+            
+            const gender = form.elements['gender'].value;
+            const smoking = form.elements['smoking'].value;
+            const hypertension = form.elements['hypertension'].value;
+            const anemia = form.elements['anemia'].value;
+            const diabetes = form.elements['diabetes'].value;
+
+            // Indicator variables (1 or 0)
+            const isFemale = (gender === 'Female') ? 1 : 0;
+            const isSmoking = (smoking === 'Yes') ? 1 : 0;
+            const isHypertension = (hypertension === 'Yes') ? 1 : 0;
+            const isAnemia = (anemia === 'Yes') ? 1 : 0;
+            const isDiabetes = (diabetes === 'Yes') ? 1 : 0;
+
+            // Logit formula directly from Excel spreadsheet
+            // Logit = -7.36 + (0.025 * Age) - (0.252 * IsFemale) + (1.023 * Smoking) + (0.104 * BMI) - (0.225 * Hypertension) + (2.24 * Anemia) + (2.218 * Diabetes)
+            const logit = -7.36 
+                + (0.025 * age) 
+                - (0.252 * isFemale) 
+                + (1.023 * isSmoking) 
+                + (0.104 * bmi) 
+                - (0.225 * isHypertension) 
+                + (2.240 * isAnemia) 
+                + (2.218 * isDiabetes);
+
+            // Probability = 1 / (1 + exp(-Logit))
+            const probability = 1 / (1 + Math.exp(-logit));
+            const probabilityPercent = probability * 100;
+
+            // UI Updates
+            probabilityText.textContent = probabilityPercent.toFixed(1) + '%';
+            logitText.textContent = logit.toFixed(4);
+            progressBar.style.width = Math.min(Math.max(probabilityPercent, 2), 100) + '%';
+
+            // Risk Categorization & Badge Styling
+            if (probabilityPercent < 15) {
+                riskBadge.textContent = 'Low Risk';
+                riskBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200';
+                progressBar.className = 'h-full rounded-full transition-all duration-300 bg-emerald-500';
+            } else if (probabilityPercent <= 30) {
+                riskBadge.textContent = 'Moderate Risk';
+                riskBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200';
+                progressBar.className = 'h-full rounded-full transition-all duration-300 bg-amber-500';
+            } else {
+                riskBadge.textContent = 'High Risk';
+                riskBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-200';
+                progressBar.className = 'h-full rounded-full transition-all duration-300 bg-rose-600';
+            }
+        }
+
+        // Event listener for all radio buttons
+        form.addEventListener('change', calculateScore);
+
+        // Reset functionality
+        resetBtn.addEventListener('click', () => {
+            ageNumber.value = 60;
+            ageRange.value = 60;
+            bmiNumber.value = 26.0;
+            bmiRange.value = 26.0;
+
+            form.elements['gender'].value = 'Male';
+            form.elements['smoking'].value = 'No';
+            form.elements['hypertension'].value = 'No';
+            form.elements['anemia'].value = 'No';
+            form.elements['diabetes'].value = 'No';
+
+            calculateScore();
+        });
+
+        // Initial Calculation on load
+        calculateScore();
+    </script>
+</body>
+</html>
